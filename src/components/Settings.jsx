@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { ShieldAlert, CheckCircle2, User, KeyRound } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -57,7 +57,7 @@ export default function Settings() {
         payload.newPassword = formData.newPassword;
       }
 
-      await axios.put('http://localhost:5000/api/auth/profile', payload);
+      await api.put('/api/auth/profile', payload);
 
       setStatus({ type: 'success', message: 'Profil mis à jour ! Déconnexion en cours...' });
       

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { Search } from 'lucide-react';
 
 export default function StockList() {
@@ -12,7 +12,7 @@ export default function StockList() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/products');
+      const res = await api.get('/api/products');
       setProducts(res.data);
     } catch (error) {
       console.error("Error fetching products", error);
@@ -30,7 +30,7 @@ export default function StockList() {
         return;
       }
 
-      await axios.put(`http://localhost:5000/api/products/${id}/sell`, { sellingPrice });
+      await api.put(`/api/products/${id}/sell`, { sellingPrice });
       fetchProducts(); // Refresh list
     } catch (error) {
       console.error("Error marking as sold", error);

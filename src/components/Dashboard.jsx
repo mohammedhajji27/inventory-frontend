@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { DollarSign, Package, TrendingUp } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -18,7 +18,7 @@ export default function Dashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/stats');
+      const res = await api.get('/api/stats');
       setStats(res.data);
       setLoading(false);
     } catch (error) {

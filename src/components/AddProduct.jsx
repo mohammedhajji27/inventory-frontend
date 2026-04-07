@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 
 export default function AddProduct() {
@@ -22,7 +22,7 @@ export default function AddProduct() {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('http://localhost:5000/api/products', formData);
+      await api.post('/api/products', formData);
       navigate('/stock');
     } catch (error) {
       console.error("Error adding product", error);

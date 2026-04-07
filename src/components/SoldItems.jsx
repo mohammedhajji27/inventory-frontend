@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 export default function SoldItems() {
   const [products, setProducts] = useState([]);
@@ -10,7 +10,7 @@ export default function SoldItems() {
 
   const fetchSoldProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/products/sold');
+      const res = await api.get('/api/products/sold');
       setProducts(res.data);
     } catch (error) {
       console.error("Error fetching sold products", error);
