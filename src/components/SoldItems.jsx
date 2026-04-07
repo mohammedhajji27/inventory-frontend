@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { FileDown } from 'lucide-react';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default function SoldItems() {
   const [products, setProducts] = useState([]);
@@ -43,7 +43,7 @@ export default function SoldItems() {
       tableRows.push(productData);
     });
 
-    doc.autoTable({
+    autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
       startY: 25,
@@ -53,7 +53,8 @@ export default function SoldItems() {
     });
 
     doc.setFontSize(11);
-    doc.text(`Benefice Total Realise : ${totalBenef.toFixed(2)} MAD`, 14, doc.autoTable.previous.finalY + 15);
+    const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : 30;
+    doc.text(`Benefice Total Realise : ${totalBenef.toFixed(2)} MAD`, 14, finalY + 15);
 
     doc.save(`rapport_ventes_${new Date().toISOString().split('T')[0]}.pdf`);
   };
