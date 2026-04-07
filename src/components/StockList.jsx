@@ -21,7 +21,15 @@ export default function StockList() {
 
   const markAsSold = async (id) => {
     try {
-      const priceInput = window.prompt("Entrez le prix de vente final (MAD) :");
+      const qtyInput = window.prompt("Combien d'unités souhaitez-vous vendre ?");
+      if (qtyInput === null) return;
+      const quantityToSell = parseInt(qtyInput, 10);
+      if (isNaN(quantityToSell) || quantityToSell <= 0) {
+        alert("Quantité invalide.");
+        return;
+      }
+
+      const priceInput = window.prompt("Entrez le prix de vente unitaire (MAD) :");
       if (priceInput === null) return; // User cancelled
       
       const sellingPrice = parseFloat(priceInput);
@@ -30,7 +38,7 @@ export default function StockList() {
         return;
       }
 
-      await api.put(`/api/products/${id}/sell`, { sellingPrice });
+      await api.put(`/api/products/${id}/sell`, { sellingPrice, quantityToSell });
       fetchProducts(); // Refresh list
     } catch (error) {
       console.error("Error marking as sold", error);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { DollarSign, Package, TrendingUp } from 'lucide-react';
+import { DollarSign, Package, TrendingUp, Calendar } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Dashboard() {
@@ -11,18 +11,21 @@ export default function Dashboard() {
     totalProfit: 0
   });
   const [loading, setLoading] = useState(true);
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [year, setYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
-    fetchStats();
-  }, []);
+    fetchStats(month, year);
+  }, [month, year]);
 
-  const fetchStats = async () => {
+  const fetchStats = async (m, y) => {
+    setLoading(true);
     try {
-      const res = await api.get('/api/stats');
+      const res = await api.get(`/api/stats?month=${m}&year=${y}`);
       setStats(res.data);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching stats", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -51,6 +54,43 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      
+      <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div className="flex items-center gap-2 text-slate-800 font-medium">
+          <Calendar size={20} className="text-indigo-600" />
+          Filtre de performance :
+        </div>
+        <div className="flex gap-4">
+          <select 
+            className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+          >
+            <option value="1">Janvier</option>
+            <option value="2">Février</option>
+            <option value="3">Mars</option>
+            <option value="4">Avril</option>
+            <option value="5">Mai</option>
+            <option value="6">Juin</option>
+            <option value="7">Juillet</option>
+            <option value="8">Août</option>
+            <option value="9">Septembre</option>
+            <option value="10">Octobre</option>
+            <option value="11">Novembre</option>
+            <option value="12">Décembre</option>
+          </select>
+          <select 
+            className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+          >
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </select>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
           title="Capital Total (Stock)" 

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
+import { FileDown } from 'lucide-react';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 export default function SoldItems() {
   const [products, setProducts] = useState([]);
@@ -17,10 +20,56 @@ export default function SoldItems() {
     }
   };
 
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.text("Rapport des Ventes - InventoryPro", 14, 15);
+    
+    const tableColumn = ["ID", "Nom", "Quantite", "Prix d'Achat", "Prix de Vente", "Benefice (MAD)"];
+    const tableRows = [];
+
+    let totalBenef = 0;
+
+    products.forEach(p => {
+      const profit = (p.sellingPrice - p.purchasePrice) * p.quantity;
+      totalBenef += profit;
+      const productData = [
+        "#" + p.id,
+        p.name,
+        p.quantity,
+        p.purchasePrice.toFixed(2),
+        p.sellingPrice.toFixed(2),
+        "+" + profit.toFixed(2)
+      ];
+      tableRows.push(productData);
+    });
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 25,
+      theme: 'grid',
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [79, 70, 229] } // Indigo-600
+    });
+
+    doc.setFontSize(11);
+    doc.text(`Benefice Total Realise : ${totalBenef.toFixed(2)} MAD`, 14, doc.autoTable.previous.finalY + 15);
+
+    doc.save(`rapport_ventes_${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-      <div className="p-6 border-b border-slate-200 bg-slate-50">
+      <div className="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
         <h2 className="text-lg font-semibold text-slate-800">Historique des ventes</h2>
+        <button 
+          onClick={generatePDF}
+          disabled={products.length === 0}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 font-medium rounded-lg hover:bg-indigo-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <FileDown size={18} />
+          <span>Exporter un PDF</span>
+        </button>
       </div>
       
       <div className="overflow-x-auto">
